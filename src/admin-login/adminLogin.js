@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import bealeImage from './images/beale.jpg';
 import { CardContent, CardMedia, Card, TextField, Button } from '@material-ui/core';
+import axios from 'axios';
+import { Redirect } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
   loginBox: {
@@ -11,12 +13,8 @@ const useStyles = makeStyles(theme => ({
     marginTop: '20px',
     marginBottom: '20px'
   },
-  pageWrapper: {
-  },
   inputStyle: {
-    // display: 'block',
     width: '365px',
-    // fontSize: '15pt'
   },
   headerText: {
     fontSize: '16pt',
@@ -24,7 +22,6 @@ const useStyles = makeStyles(theme => ({
     margin:'0px',
     textAlign: 'center',
     color: 'rgb(145, 44, 44)'
-    // marginTop: '10px'
   },
   media: {
     height: '110px'
@@ -36,14 +33,45 @@ const useStyles = makeStyles(theme => ({
   },
   buttonStyle: {
     width: '100px'
+  },
+  errorMessage: {
+    color: 'red',
+    fontStyle: 'italic',
+    margin: '0px',
+    marginTop: '5px'
   }
 }));
 
 function AdminLogin() {
   const styles = useStyles();
+  const [username, changeUsername] = useState('');
+  const [password, changePassword] = useState('');
+  const [showError, changeError] = useState(false);
+  const [redirect, changeRedirect] = useState(false);
+
+  async function loginPressed() {
+    const { data } = await axios.post('/processLogin', {username, password})
+    console.log("response:", data)
+    if(data.success != 1) {
+      changeError(true);
+    }
+    else {
+      changeError(false);
+      changeRedirect(true);
+    }
+  }
+  function handleUsernameChange(event) {
+    const newUsername = event.target.value
+    changeUsername(newUsername);
+  }
+  function handlePasswordChange(event) {
+    const newPassword = event.target.value;
+    changePassword(event.target.value)
+  }
 
   return(
-    <div className={styles.pageWrapper}>
+    <div>
+      {redirect && <Redirect to='/admin' />}
       <Card className={styles.loginBox} raised>
       <CardMedia
           className={styles.media}
@@ -52,6 +80,7 @@ function AdminLogin() {
         />
         <CardContent>
           <p className={styles.headerText}>Admin Login</p>
+          { showError && <p className={styles.errorMessage}>*Login credentials invalid</p> }
           <TextField
           required
           id="outlined-required"
@@ -59,6 +88,8 @@ function AdminLogin() {
           className={styles.inputStyle}
           margin="normal"
           variant="outlined"
+          onChange={handleUsernameChange}
+          name='username'
         />
         <TextField
           id="outlined-password-input"
@@ -68,20 +99,16 @@ function AdminLogin() {
           autoComplete="current-password"
           margin="normal"
           variant="outlined"
+          name='password'
+          onChange={handlePasswordChange}
         />
         <div className={styles.buttonDivStyle}>
-        <Button variant="contained" color="primary" className={styles.buttonStyle}>
+        <Button variant="contained" color="primary" className={styles.buttonStyle} onClick={loginPressed}>
           Login
         </Button>
         </div>
         </CardContent>
       </Card>
-      {/* <div className={styles.loginBox}>
-        <p className={styles.headerText}>Admin Login</p>
-        <input type='text' placeholder='username' className={styles.inputStyle}></input>
-        <input type='password' placeholder='password' className={styles.inputStyle}></input>
-        <button>LOGIN</button>
-      </div> */}
     </div>
   )
 }
