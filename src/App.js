@@ -12,6 +12,7 @@ import About from './about/about';
 import Header from './header/header';
 import Footer from './header/footer';
 import AdminLogin from './admin-login/adminLogin';
+import Admin from './admin/admin';
 
 function App() {
   const [currentTab, changeTab] = useState('home');
@@ -43,7 +44,7 @@ function App() {
           </Route>
 
           <Route exact path='/admin'>
-            <p>This is where the admin page will be</p>
+            <Admin />
           </Route>
           <Footer/>
         </Router>

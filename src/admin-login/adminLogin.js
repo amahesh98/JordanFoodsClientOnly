@@ -56,6 +56,7 @@ function AdminLogin() {
       changeError(true);
     }
     else {
+      localStorage.setItem('loggedIn', true);
       changeError(false);
       changeRedirect(true);
     }
@@ -92,6 +93,7 @@ function AdminLogin() {
           name='username'
         />
         <TextField
+          required
           id="outlined-password-input"
           label="Password"
           className={styles.inputStyle}
