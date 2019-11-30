@@ -11,6 +11,7 @@ import Menu from './menu/menu';
 import About from './about/about';
 import Header from './header/header';
 import Footer from './header/footer';
+import AdminLogin from './admin-login/adminLogin';
 
 function App() {
   const [currentTab, changeTab] = useState('home');
@@ -24,37 +25,27 @@ function App() {
     <div className="App">
       <div className='wrapper'>
         <Router>
-
+          <Header showNavigation={true}/>
           <Route exact path='/'>
-            <Header showNavigation={true}/>
             <Homepage />
-            <Footer/>
           </Route>
 
           <Route exact path='/menu'>
-            <Header showNavigation={true}/>
             <Menu/>
-            <Footer/>
           </Route>
 
           <Route exact path='/about'>
-            <Header showNavigation={true}/>
             <About />
-            <Footer/>
           </Route>
 
           <Route exact path='/admin/login'>
-            <Header />
-            <p>This is where the admin login will be</p>
-            <Footer/>
+            <AdminLogin />
           </Route>
 
           <Route exact path='/admin'>
-            <Header />
             <p>This is where the admin page will be</p>
-            <Footer/>
           </Route>
-
+          <Footer/>
         </Router>
       </div>
     </div>
