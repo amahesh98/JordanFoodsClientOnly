@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import bealeImage from './images/beale.jpg';
 import { CardContent, CardMedia, Card, TextField, Button } from '@material-ui/core';
@@ -15,6 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
   inputStyle: {
     width: '365px',
+    background: 'white'
   },
   headerText: {
     fontSize: '16pt',
@@ -39,6 +40,9 @@ const useStyles = makeStyles(theme => ({
     fontStyle: 'italic',
     margin: '0px',
     marginTop: '5px'
+  },
+  pageWrapper: {
+    minHeight: '75vh'
   }
 }));
 
@@ -49,29 +53,35 @@ function AdminLogin() {
   const [showError, changeError] = useState(false);
   const [redirect, changeRedirect] = useState(false);
 
+  useEffect(() => {
+    checkAuthentication();
+  }, [])
+
   async function loginPressed() {
     const { data } = await axios.post('/processLogin', {username, password})
-    console.log("response:", data)
-    if(data.success != 1) {
-      changeError(true);
-    }
+    if(data.success !== 1) changeError(true);
     else {
-      localStorage.setItem('loggedIn', true);
       changeError(false);
       changeRedirect(true);
     }
   }
+
+  async function checkAuthentication() {
+    const { data } = await axios.get('/checkAuthentication');
+    if(data.success === 1) {
+      changeRedirect(true);
+    }
+  }
+
   function handleUsernameChange(event) {
-    const newUsername = event.target.value
-    changeUsername(newUsername);
+    changeUsername(event.target.value);
   }
   function handlePasswordChange(event) {
-    const newPassword = event.target.value;
     changePassword(event.target.value)
   }
 
   return(
-    <div>
+    <div className={styles.pageWrapper}>
       {redirect && <Redirect to='/admin' />}
       <Card className={styles.loginBox} raised>
       <CardMedia
@@ -91,6 +101,7 @@ function AdminLogin() {
           variant="outlined"
           onChange={handleUsernameChange}
           name='username'
+          value={username}
         />
         <TextField
           required
@@ -103,6 +114,7 @@ function AdminLogin() {
           variant="outlined"
           name='password'
           onChange={handlePasswordChange}
+          value={password}
         />
         <div className={styles.buttonDivStyle}>
         <Button variant="contained" color="primary" className={styles.buttonStyle} onClick={loginPressed}>
